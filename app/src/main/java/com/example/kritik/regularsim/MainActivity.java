@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity
     TextView tv_bssid = null;
     TextView tv_ssid = null;
     TextView tv_location = null;
+    TextView tv_encryption_key = null;
     GeoLocationData geoLocationData = null;
 
     String api_response = null;
@@ -58,15 +59,19 @@ public class MainActivity extends AppCompatActivity
         tv_bssid = (TextView)findViewById(R.id.tv_bssid);
         tv_ssid = (TextView)findViewById(R.id.tv_ssid);
         tv_location = (TextView)findViewById(R.id.tv_location);
+        tv_encryption_key = (TextView)findViewById(R.id.tv_encryption_key);
 
 //        this.registerReceiver(defaultBroadcastReceiver, defaultFilter);
         this.registerReceiver(modifiedInfoReceiver, modifiedFilter);
 
         if (RegApplication.getBssid() != null)
-            tv_bssid.setText("BSSID " + RegApplication.getBssid());
+            tv_bssid.setText("BSSID " + RegApplication.getBssid() + "\n(Encrypted: )" + RegApplication.getEncrypted_bssid());
 
         if (RegApplication.getSsid() != null)
-            tv_ssid.setText("SSID " + RegApplication.getSsid());
+            tv_ssid.setText("SSID " + RegApplication.getSsid() + "\n(Encrypted: )" + RegApplication.getEncrypted_ssid());
+
+        if (RegApplication.getEncryption_key() != null)
+            tv_encryption_key.setText("Encryption Key: " + RegApplication.getEncryption_key());
 
     }
 

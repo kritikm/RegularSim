@@ -30,6 +30,10 @@ public class ModifiedBroadcastReceiver extends BroadcastReceiver
         Log.d("Encrypted", "BSSID " + encrypted_bssid);
         Log.d("Encrypted", "SECRET " + key);
 
+        RegApplication.setEncrypted_bssid(encrypted_bssid);
+        RegApplication.setEncrypted_ssid(encrypted_ssid);
+        RegApplication.setEncryption_key(key);
+
         String ssid = null;
         String bssid = null;
         try
