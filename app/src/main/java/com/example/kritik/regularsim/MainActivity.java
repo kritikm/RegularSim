@@ -1,5 +1,6 @@
 package com.example.kritik.regularsim;
 
+import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -38,10 +39,9 @@ public class MainActivity extends AppCompatActivity
     TextView tv_location = null;
     GeoLocationData geoLocationData = null;
 
-
     String api_response = null;
+//    Intent wifiDataIntent = null;
 
-    private IntentFilter defaultFilter = new IntentFilter("DEFAULT_WIFI_BROADCAST");
     private IntentFilter modifiedFilter = new IntentFilter("MODIFIED_WIFI_BROADCAST");
 
     @Override
@@ -59,15 +59,23 @@ public class MainActivity extends AppCompatActivity
         tv_ssid = (TextView)findViewById(R.id.tv_ssid);
         tv_location = (TextView)findViewById(R.id.tv_location);
 
-        this.registerReceiver(infoReceiver, defaultFilter);
-        this.registerReceiver(infoReceiver, modifiedFilter);
+//        this.registerReceiver(defaultBroadcastReceiver, defaultFilter);
+        this.registerReceiver(modifiedInfoReceiver, modifiedFilter);
+
+        if (RegApplication.getBssid() != null)
+            tv_bssid.setText("BSSID " + RegApplication.getBssid());
+
+        if (RegApplication.getSsid() != null)
+            tv_ssid.setText("SSID " + RegApplication.getSsid());
+
     }
 
     @Override
     public void onStop()
     {
         super.onStop();
-        this.unregisterReceiver(infoReceiver);
+//        this.unregisterReceiver(defaultBroadcastReceiver);
+        this.unregisterReceiver(modifiedInfoReceiver);
     }
 
     public void GetLocation(View view)
@@ -96,7 +104,7 @@ public class MainActivity extends AppCompatActivity
 
     private void GetWebpage(String bssid) throws IOException
     {
-        bssid = "18:64:72:23:e1:32";
+//        bssid = "18:64:72:23:e1:32";
         String baseUrl = "https://api.mylnikov.org/geolocation/wifi?v=1.1&data=closed&bssid=" + bssid;
 
         Request request = new Request.Builder()
@@ -140,20 +148,34 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    private BroadcastReceiver infoReceiver = new BroadcastReceiver()
+    private BroadcastReceiver defaultInfoReceiver = new BroadcastReceiver()
     {
         @Override
         public void onReceive(Context context, Intent intent)
         {
 
-            WifiInfo stuff = (WifiInfo) intent.getExtras().get("wifiInfo");
+//            WifiInfo stuff = (WifiInfo) intent.getExtras().get("wifiInfo");
             if (intent.getAction().equals("DEFAULT_WIFI_BROADCAST"))
             {
-//                WifiInfo stuff = ((WifiInfo) intent.getExtras());
-                bssid = stuff.getBSSID();
-                ssid = stuff.getSSID();
+                Log.d("INTENT", "intent milgaya");
+                ssid = intent.getStringExtra("SSID");
+                bssid = intent.getStringExtra("BSSID");
+                tv_ssid.setText("SSID " + ssid);
+                tv_bssid.setText("BSSID " + bssid);
             }
-            else if (intent.getAction().equals("MODIFIED_WIFI_BROADCAST"))
+        }
+
+    };
+
+    private BroadcastReceiver modifiedInfoReceiver = new BroadcastReceiver()
+    {
+        @Override
+        public void onReceive(Context context, Intent intent)
+        {
+
+//            WifiInfo stuff = (WifiInfo) intent.getExtras().get("wifiInfo");
+
+            if (intent.getAction().equals("MODIFIED_WIFI_BROADCAST"))
             {
 
             }
@@ -162,4 +184,5 @@ public class MainActivity extends AppCompatActivity
             tv_ssid.setText(ssid);
         }
     };
+
 }
